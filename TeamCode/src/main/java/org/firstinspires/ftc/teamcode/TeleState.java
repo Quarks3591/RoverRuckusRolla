@@ -11,7 +11,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp
 
-public class TeleState extends OpMode {
+public class TeleState extends OpMode
+{
     //Initializes all motors and servos
     DcMotor FrontLeft;
     DcMotor BackLeft;
@@ -22,9 +23,12 @@ public class TeleState extends OpMode {
     DcMotor HangLift;
     DcMotor BoxLift;
     DcMotor Collector;
-    Servo depositor;
 
-    public void init() {
+    Servo depositor;
+    Servo TeamMarker;
+
+    public void init()
+    {
         //maps all motors and servos for the phone
         FrontLeft = hardwareMap.dcMotor.get("front_left_drive");
         BackLeft = hardwareMap.dcMotor.get("back_left_drive");
@@ -33,48 +37,59 @@ public class TeleState extends OpMode {
         FrontRight.setDirection(DcMotor.Direction.REVERSE);
         BackRight.setDirection(DcMotor.Direction.REVERSE);
 
-        HangLift = hardwareMap.dcMotor.get("Lift");
-        depositor = hardwareMap.servo.get("Depositor");
+        HangLift = hardwareMap.dcMotor.get("hang_lift");
+        HangSpool = hardwareMap.dcMotor.get("hang_spool");
+        BoxLift = hardwareMap.dcMotor.get("box_lift");
+        Collector = hardwareMap.dcMotor.get("collector");
+
+        depositor = hardwareMap.servo.get("depositor");
+        TeamMarker = hardwareMap.servo.get("team_marker");
     }
 
-    public void loop() {
-
+    public void loop()
+    {
         //move forwards
-        if (gamepad1.right_trigger > 0.1){
+        if (gamepad1.right_trigger > 0.1)
+        {
             FrontLeft.setPower(gamepad1.right_trigger);
             BackLeft.setPower(gamepad1.right_trigger);
             FrontRight.setPower(gamepad1.right_trigger);
             BackRight.setPower(gamepad1.right_trigger);
         }
         //move backwards
-        else if (gamepad1.left_trigger > 0.1) {
+        else if (gamepad1.left_trigger > 0.1)
+        {
             FrontLeft.setPower(-gamepad1.left_trigger);
             BackLeft.setPower(-gamepad1.left_trigger);
             FrontRight.setPower(-gamepad1.left_trigger);
             BackRight.setPower(-gamepad1.left_trigger);
         }
         //move right
-        else if (gamepad1.dpad_right) {
+        else if (gamepad1.dpad_right)
+        {
             FrontLeft.setPower(1.0);
             BackLeft.setPower(-1.0);
             FrontRight.setPower(-1.0);
             BackRight.setPower(1.0);
         }
         //move left
-        else if (gamepad1.dpad_left) {
+        else if (gamepad1.dpad_left)
+        {
             FrontLeft.setPower(-1.0);
             BackLeft.setPower(1.0);
             FrontRight.setPower(1.0);
             BackRight.setPower(-1.0);
         }
         //rotation
-        else if (gamepad1.right_stick_x != 0){
+        else if (gamepad1.right_stick_x != 0)
+        {
             FrontLeft.setPower(gamepad1.right_stick_x);
             BackLeft.setPower(gamepad1.right_stick_x);
             FrontRight.setPower(-gamepad1.right_stick_x);
             BackRight.setPower(-gamepad1.right_stick_x);
         }
-        else {
+        else
+        {
             BackLeft.setPower(0.0);
             FrontRight.setPower(0.0);
             FrontLeft.setPower(0.0);
@@ -82,31 +97,50 @@ public class TeleState extends OpMode {
         }
 
         //raise hang lift
-        if (gamepad2.y){
+        if (gamepad2.y)
+        {
             HangLift.setPower(0.8);
             HangSpool.setPower(.4);
         }
         //lower hang lift
-        if (gamepad2.x){
+        if (gamepad2.x)
+        {
             HangLift.setPower(-0.8);
             HangSpool.setPower(-.4);
         }
+        else
+        {
+            HangLift.setPower(0.0);
+            HangSpool.setPower(0.0);
+        }
 
         //run collector
-        if (gamepad2.right_trigger > 0.1){
-            Collector.setPower(gamepad1.right_trigger);
+        if (gamepad2.right_trigger > 0.1)
+        {
+            Collector.setPower(gamepad2.right_trigger);
         }
-        if (gamepad2.left_trigger > 0){
+        if (gamepad2.left_trigger > 0)
+        {
             Collector.setPower(-gamepad2.left_trigger);
+        }
+        else
+        {
+            Collector.setPower(0.0);
         }
 
         //raise box lift
-        if (gamepad2.dpad_up){
+        if (gamepad2.dpad_up)
+        {
             BoxLift.setPower(1.0);
         }
         //lower box lift
-        if (gamepad2.dpad_down){
+        if (gamepad2.dpad_down)
+        {
             BoxLift.setPower(-1.0);
+        }
+        else
+        {
+            BoxLift.setPower(0.0);
         }
 
         //flip box with depositor servo
@@ -116,6 +150,5 @@ public class TeleState extends OpMode {
         if (gamepad2.b){
             depositor.setPosition(0.0);
         }
-
     }
 }
