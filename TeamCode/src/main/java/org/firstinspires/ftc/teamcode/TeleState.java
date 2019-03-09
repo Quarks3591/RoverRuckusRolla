@@ -90,12 +90,19 @@ public class TeleState extends OpMode
             BackRight.setPower(-1.0);
         }
         //rotation
-        else if (gamepad1.left_stick_x != 0)
+        else if (gamepad1.left_stick_x > 0.2)
         {
-            FrontLeft.setPower(gamepad1.left_stick_x);
-            BackLeft.setPower(gamepad1.left_stick_x);
-            FrontRight.setPower(-gamepad1.left_stick_x);
-            BackRight.setPower(-gamepad1.left_stick_x);
+            FrontLeft.setPower(0.75);
+            BackLeft.setPower(0.75);
+            FrontRight.setPower(-0.75);
+            BackRight.setPower(-0.75);
+        }
+        else if (gamepad1.left_stick_x < -0.2)
+        {
+            FrontLeft.setPower(-0.75);
+            BackLeft.setPower(-0.75);
+            FrontRight.setPower(0.75);
+            BackRight.setPower(0.75);
         }
         else
         {
