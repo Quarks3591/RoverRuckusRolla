@@ -5,18 +5,13 @@ package org.firstinspires.ftc.teamcode;
  */
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import java.util.List;
-
-import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 
 /**
  * Created by User on 11/7/2017.
@@ -46,11 +41,7 @@ public class AutoState extends LinearOpMode {
     private static final String LABEL_GOLD_MINERAL = "Gold Mineral";
     private static final String LABEL_SILVER_MINERAL = "Silver Mineral";
 
-    private static final String VUFORIA_KEY = "AcRQ+zL/////AAABmY1C1gY/ZkQvj7F1OvmMC/srTdyIgHwBg4eKi" +
-            "a3ks1CRw0/8p6QcRy8Z5Fn95CZX2t3VOVzsDYUtcXMDdeRMh38BZClV8VXhy4xOc231eQ+DzLvHbCJIHWhFgJHpB" +
-            "1B5tcv4xHwXUpBOKpa0VwdAgsS2/Sde5sBx02hyUcPaDx9llJH2GoaYrhNOPh6F6g2xXckTHz9XZuXKDwXTps0q+" +
-            "5YRoBKWf6kADm5T4ynt4umaiHJ0UzmDk7mSZKjF/Tzd1gIbQD3z0mnUqTs0RIIC/4XCOLMvIqFYjx2+KspopYRET/" +
-            "D2gzJHnZ1Mi/GTY9CPBCWR/H6MnudAC0fI8Iuv29aZMQfg7KNWHCdIT42RvWzO";
+    private static final String VUFORIA_KEY = "AV24vGn/////AAABmWE3UiJNLEVUhnXBR0kFSAdSCm/ONqDkdhfldODUiAgt7kKezyX6YzsSJKhTw9oQ6ymcvGtNBuOK84/OuemOmGv8XYoYgTkJUu8pDIRl6ExvjNifxnPTeZO3RTzAkruuJ8NMNpn0MeM+aPBXJx3URftKMoEvV4uyVNAE4A+WTvQbDk8t7RXRWrKZRI9SkJsphRK9EJCGRYnpHM7NfF2uOT7V7UjqNCuedIyff2HfeWqVHaXqOCWiavel8ASAdqDqaFkARsy+VcCGU6KFR/Xn1YcBZj9dTV5Rzub51OrlW+FO/2HXGbUWRNV4e7PNfTvsyrRFCcrnXG0vk15HyrzZ5MaPOBcBTAXEGqsQWTpkXJiW";
 
     private VuforiaLocalizer vuforia;
 
@@ -60,12 +51,6 @@ public class AutoState extends LinearOpMode {
     public void runOpMode() {
         //init hardware
         chassis.init(hardwareMap);
-
-        //Reset all Encoders
-        chassis.stopAndReset();
-
-        //Set to run using encoders
-        chassis.runUsingEncoders();
 
         // The TFObjectDetector uses the camera frames from the VuforiaLocalizer, so we create that
         // first.
@@ -80,6 +65,7 @@ public class AutoState extends LinearOpMode {
         /** Wait for the game to begin */
         telemetry.addData(">", "Press Play to start tracking");
         telemetry.update();
+
         waitForStart();
 
         if (opModeIsActive()) {
@@ -88,7 +74,7 @@ public class AutoState extends LinearOpMode {
                 tfod.activate();
             }
 
-            while (opModeIsActive()) {
+            //while (opModeIsActive()) {
                 if (tfod != null) {
                     // getUpdatedRecognitions() will return null if no new information is available since
                     // the last time that call was made.
@@ -124,40 +110,61 @@ public class AutoState extends LinearOpMode {
                         telemetry.update();
                     }
                 }
+            //}
+            //Reset all Encoders
+            chassis.stopAndReset();
+
+            //Set to run using encoders
+            chassis.runUsingEncoders();
+
+            //lower to the ground and let go of bracket
+            chassis.extendLift();
+            sleep(1000);
+            chassis.stopLift();
+            sleep(100);
+            encoderDrive(1.0, -15, 15, 15, -15, 5);
+            chassis.retractLift();
+            sleep(100);
+            chassis.stopLift();
+            sleep(100);
+
+
+            //knock gold mineral
+            if (left = true){
+                if (center = false) {
+                    if (right = false) {
+                        chassis.turnToPosition(-15);
+                        encoderDrive(1.0, -38, -38, -38, -38, 10);
+                        chassis.turnToPosition(15);
+                        encoderDrive(1.0, -24, -24, -24, -24, 8);
+                    }
+                }
             }
+            else if (center = true){
+                if (left = false) {
+                    if (right = false) {
+                        encoderDrive(1.0, -88, -88, -88, -88, 15);
+                    }
+                }
+            }
+            else if (right = true){
+                if (left = false) {
+                    if (center = false) {
+                        chassis.turnToPosition(15);
+                        encoderDrive(1.0, -38, -38, -38, -38, 10);
+                        chassis.turnToPosition(15);
+                        encoderDrive(1.0, -24, -24, -24, -24, 8);
+                    }
+                }
+            }
+            chassis.TeamMarker.setPosition(0.0);
+            sleep(500);
+            chassis.TeamMarker.setPosition(.5);
         }
 
         if (tfod != null) {
             tfod.shutdown();
         }
-
-        //lower to the ground and let go of bracket
-        chassis.extendLift();
-        sleep(1000);
-        chassis.stopLift();
-        sleep(100);
-        encoderDrive(1.0, -5, 5, 5, -5, 5);
-        chassis.retractLift();
-        sleep(1000);
-        chassis.stopLift();
-        sleep(100);
-
-
-        //knock gold mineral
-        if (left = true){
-            chassis.turnToPosition(-45);
-            encoderDrive(1.0, 38, 38, 38, 38, 10);
-        }
-        else if (center = true){
-            encoderDrive(1.0, 88, 88, 88, 88, 15);
-        }
-        else if (right = true){
-            chassis.turnToPosition(45);
-            encoderDrive(1.0, 38, 38, 38, 38, 10);
-        }
-        chassis.markerHolder.setPosition(120);
-        sleep(500);
-        chassis.markerHolder.setPosition(0);
     }
 
     /*
@@ -236,7 +243,7 @@ public class AutoState extends LinearOpMode {
         parameters.cameraDirection = CameraDirection.BACK;
 
         //  Instantiate the Vuforia engine
-        vuforia = ClassFactory.getInstance().createVuforia(parameters);
+        this.vuforia = ClassFactory.getInstance().createVuforia(parameters);
 
         // Loading trackables is not necessary for the Tensor Flow Object Detection engine.
     }

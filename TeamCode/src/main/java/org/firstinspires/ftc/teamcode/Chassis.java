@@ -25,7 +25,7 @@ public class Chassis {
     DcMotor Collector;
 
     Servo depositor;
-    Servo markerHolder;
+    Servo TeamMarker;
 
     boolean vision=false;
 
@@ -34,16 +34,7 @@ public class Chassis {
 
     VuforiaLocalizer vuforia;
 
-    DistanceSensor distance;
-
-    ColorSensor color;
-
-    //set final variables
-    final static double INIT = 0.0;
-    final static double UP = 0.4;
-
     //constructors
-    Chassis() {}
     Chassis(boolean v) {vision=v;}
 
     //hardware init method
@@ -62,7 +53,7 @@ public class Chassis {
         Collector = hwm.get(DcMotor.class, "collector");
 
         depositor = hwm.get(Servo.class, "depositor");
-        markerHolder = hwm.get(Servo.class, "markerHolder");
+        TeamMarker = hwm.get(Servo.class, "team_marker");
 
         //set drivetrain direction
         FrontLeft.setDirection(DcMotor.Direction.FORWARD);
@@ -99,25 +90,8 @@ public class Chassis {
         Collector.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //set init position
-        depositor.setPosition(INIT);
-        markerHolder.setPosition(INIT);
-
-        //setup vision if desired
-        if(vision) {
-            int cameraMonitorViewId = hwm.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hwm.appContext.getPackageName());
-            VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
-
-            parameters.vuforiaLicenseKey = "AXdOcVz/////AAAAGSXgHubMS0r6roxUdjf9DWKA7GTut2LGpmgusuOdBmgcr9vnOOQAc9l3bXYlX+3nFwmePFZh1Brz4BsbF1h6zhAXHx5VvmWWpVeNoCLbxDnyaPBtmZ3k2ZgHLFLTjS2ST/arbrmCSAVUTX9xOgenNw+pcCuZYKQxr34uWWppyhJPPIPP152Gud24gReY/Sg8hM20JYH49E1nRLpIjYA1FTxWy135xOu5SCns1p48AgTLxyy51v0WRBALpIWAW/Qe30gGHb9W3swgPlBj1EVMFgLdCXgp5NAlKNvID6T6G8NaN2dYY64Cv601JDKkcGHM1KNU5N4vn6spJkE0tZI2NqfiSaBKT59+nPsbv5AGQ0IA";
-
-            parameters.cameraDirection = VuforiaLocalizer.CameraDirection.FRONT;
-            this.vuforia = ClassFactory.createVuforiaLocalizer(parameters);
-        }
-    }
-    //fixes out-of-range issue with distance sensor
-    public double getDistance() {
-        double d = distance.getDistance(DistanceUnit.CM);
-        if(isNaN(d)) d = 100.0;
-        return d;
+        depositor.setPosition(0);
+        TeamMarker.setPosition(.55);
     }
     //stops chassis
     public void stop() {
