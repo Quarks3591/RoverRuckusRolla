@@ -44,6 +44,15 @@ public class TeleState extends OpMode
 
         depositor = hardwareMap.servo.get("depositor");
         TeamMarker = hardwareMap.servo.get("team_marker");
+
+        FrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        BackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        FrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        BackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        HangLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        HangSpool.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        BoxLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        Collector.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     public void loop()
@@ -81,12 +90,12 @@ public class TeleState extends OpMode
             BackRight.setPower(-1.0);
         }
         //rotation
-        else if (gamepad1.right_stick_x != 0)
+        else if (gamepad1.left_stick_x != 0)
         {
-            FrontLeft.setPower(gamepad1.right_stick_x);
-            BackLeft.setPower(gamepad1.right_stick_x);
-            FrontRight.setPower(-gamepad1.right_stick_x);
-            BackRight.setPower(-gamepad1.right_stick_x);
+            FrontLeft.setPower(gamepad1.left_stick_x);
+            BackLeft.setPower(gamepad1.left_stick_x);
+            FrontRight.setPower(-gamepad1.left_stick_x);
+            BackRight.setPower(-gamepad1.left_stick_x);
         }
         else
         {

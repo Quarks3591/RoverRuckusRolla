@@ -5,6 +5,7 @@ package org.firstinspires.ftc.teamcode;
  */
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import java.util.List;
 
@@ -22,8 +23,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
  */
 @Autonomous
 public class AutoState extends LinearOpMode {
-    /* Declare OpMode members. */
-    HardwarePushbot robot   = new HardwarePushbot();   // Use a Pushbot's hardware
+    // Declare OpMode members.
     private ElapsedTime     runtime = new ElapsedTime();
 
     static final double     COUNTS_PER_MOTOR_REV    = 288 ;    // eg: TETRIX Motor Encoder
@@ -35,7 +35,7 @@ public class AutoState extends LinearOpMode {
     static final double     TURN_SPEED              = 0.5;
 
     //creating hardware objects
-    Chassis chassis = new Chassis(true);
+    Chassis chassis = new Chassis(true); //Initialize our Pushbot
 
     private static final String TFOD_MODEL_ASSET = "RoverRuckus.tflite";
     private static final String LABEL_GOLD_MINERAL = "Gold Mineral";
@@ -135,37 +135,99 @@ public class AutoState extends LinearOpMode {
         sleep(1000);
         chassis.stopLift();
         sleep(100);
-        chassis.strafeLeftDistance(1.0, 1000);
+        encoderDrive(1.0, -5, 5, 5, -5, 5);
         chassis.retractLift();
         sleep(1000);
         chassis.stopLift();
         sleep(100);
-
-        //scan minerals using phone
 
 
         //knock gold mineral
         boolean left = false;
         boolean middle = false;
         boolean right = false;
-        chassis.driveForwardDistance(1.0, 1000);
-
 
         //move to team depot and drop team marker
         if (left = true){
             chassis.turnToPosition(-45);
-            chassis.driveForwardDistance(1.0, 5000);
+            encoderDrive(1.0, 38, 38, 38, 38, 10);
         }
         else if (middle = true){
-            chassis.driveForwardDistance(1.0, 5000);
+            encoderDrive(1.0, 88, 88, 88, 88, 15);
         }
         else if (right = true){
             chassis.turnToPosition(45);
-            chassis.driveForwardDistance(1.0, 5000);
+            encoderDrive(1.0, 38, 38, 38, 38, 10);
         }
         chassis.markerHolder.setPosition(120);
         sleep(500);
         chassis.markerHolder.setPosition(0);
+    }
+
+    /*
+     *  Method to perfmorm a relative move, based on encoder counts.
+     *  Encoders are not reset as the move is based on the current position.
+     *  Move will stop if any of three conditions occur:
+     *  1) Move gets to the desired position
+     *  2) Move runs out of time
+     *  3) Driver stops the opmode running.
+     */
+    public void encoderDrive(double speed,
+                             double frontLeftInches, double backLeftInches, double frontRightInches, double backRightInches,
+                             double timeoutS) {
+        int newBackLeftTarget;
+        int newBackRightTarget;
+        int newFrontLeftTarget;
+        int newFrontRightTarget;
+
+        // Ensure that the opmode is still active
+        if (opModeIsActive()) {
+
+            // Determine new target position, and pass to motor controller
+            newBackLeftTarget = chassis.BackLeft.getCurrentPosition() + (int)(backLeftInches * COUNTS_PER_INCH);
+            newBackRightTarget = chassis.BackRight.getCurrentPosition() + (int)(backRightInches * COUNTS_PER_INCH);
+            newFrontLeftTarget = chassis.FrontLeft.getCurrentPosition() + (int)(frontLeftInches * COUNTS_PER_INCH);
+            newFrontRightTarget = chassis.FrontRight.getCurrentPosition() + (int)(frontRightInches * COUNTS_PER_INCH);
+            chassis.BackLeft.setTargetPosition(newBackLeftTarget);
+            chassis.BackRight.setTargetPosition(newBackRightTarget);
+            chassis.FrontLeft.setTargetPosition(newFrontLeftTarget);
+            chassis.FrontRight.setTargetPosition(newFrontRightTarget);
+
+            // Turn On RUN_TO_POSITION
+            chassis.runToPosition();
+
+            // reset the timeout time and start motion.
+            runtime.reset();
+            chassis.driveForward(Math.abs(speed));
+
+            // keep looping while we are still active, and there is time left, and both motors are running.
+            // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
+            // its target position, the motion will stop.  This is "safer" in the event that the robot will
+            // always end the motion as soon as possible.
+            // However, if you require that BOTH motors have finished their moves before the robot continues
+            // onto the next step, use (isBusy() || isBusy()) in the loop test.
+            while (opModeIsActive() &&
+                    (runtime.seconds() < timeoutS) &&
+                    (chassis.allMotorsAreBusy())) {
+
+                // Display it for the driver.
+                telemetry.addData("Path1",  "Running to %7d :%7d", newFrontLeftTarget,  newFrontRightTarget);
+                telemetry.addData("Path2",  "Running at %7d :%7d",
+                        chassis.FrontLeft.getCurrentPosition(),
+                        chassis.FrontRight.getCurrentPosition(),
+                        chassis.BackLeft.getCurrentPosition(),
+                        chassis.BackRight.getCurrentPosition());
+                telemetry.update();
+            }
+
+            // Stop all motion;
+            chassis.stop();
+
+            // Turn off RUN_TO_POSITION
+            chassis.runUsingEncoders();
+
+            //  sleep(250);   // optional pause after each move
+        }
     }
 
     private void initVuforia() {
@@ -190,4 +252,6 @@ public class AutoState extends LinearOpMode {
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_GOLD_MINERAL, LABEL_SILVER_MINERAL);
     }
+
 }
+

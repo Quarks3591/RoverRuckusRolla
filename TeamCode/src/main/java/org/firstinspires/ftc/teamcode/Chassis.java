@@ -176,6 +176,9 @@ public class Chassis {
     public boolean motorsAreBusy() {
         return (FrontLeft.isBusy() || BackLeft.isBusy() || FrontRight.isBusy() || BackRight.isBusy());
     }
+    public boolean allMotorsAreBusy() {
+        return (FrontLeft.isBusy() && BackLeft.isBusy() && FrontRight.isBusy() && BackRight.isBusy());
+    }
     //turn to given position
     public void turnToPosition(int position) {
         warmUp();
@@ -238,100 +241,4 @@ public class Chassis {
         HangSpool.setPower(0.0);
     }
 
-    //drive a distance method
-    public void driveForwardDistance(double power, int distance){
-        //reset encoders
-        stopAndReset();
-
-        //Set target position
-        FrontLeft.setTargetPosition(distance);
-        BackLeft.setTargetPosition(distance);
-        FrontRight.setTargetPosition(distance);
-        BackRight.setTargetPosition(distance);
-
-        //Set to RUN_TO_POSITION mode
-        FrontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        BackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        FrontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        BackRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        //Set drive power
-        driveForward(power);
-
-        while(FrontLeft.isBusy() && BackLeft.isBusy() && FrontRight.isBusy() && BackRight.isBusy()){
-            //wait until target position is reached
-        }
-
-        //stop and change modes back to normal
-        stop();
-        FrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        BackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        FrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        BackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    }
-
-    public void strafeLeftDistance(double power, int distance) {
-        //reset encoders
-        stopAndReset();
-
-        //Set target position
-        FrontLeft.setTargetPosition(distance);
-        BackLeft.setTargetPosition(-distance);
-        FrontRight.setTargetPosition(-distance);
-        BackRight.setTargetPosition(distance);
-
-        //Set to RUN_TO_POSITION mode
-        FrontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        BackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        FrontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        BackRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        //Set drive power
-        driveForward(power);
-
-        while(FrontLeft.isBusy() && BackLeft.isBusy() && FrontRight.isBusy() && BackRight.isBusy()){
-            //wait until target position is reached
-        }
-
-        //stop and change modes back to normal
-        stop();
-        FrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        BackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        FrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        BackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    }
-
-    public void strafeRightDistance(double power, int distance){
-        //reset encoders
-        stopAndReset();
-
-        //Set target position
-        FrontLeft.setTargetPosition(-distance);
-        BackLeft.setTargetPosition(distance);
-        FrontRight.setTargetPosition(distance);
-        BackRight.setTargetPosition(-distance);
-
-        //Set to RUN_TO_POSITION mode
-        FrontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        BackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        FrontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        BackRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        //Set drive power
-        driveForward(power);
-
-        while(FrontLeft.isBusy() && BackLeft.isBusy() && FrontRight.isBusy() && BackRight.isBusy()){
-            //wait until target position is reached
-        }
-
-        //stop and change modes back to normal
-        stop();
-        FrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        BackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        FrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        BackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    }
-    public void findColor (){
-
-    }
 }
