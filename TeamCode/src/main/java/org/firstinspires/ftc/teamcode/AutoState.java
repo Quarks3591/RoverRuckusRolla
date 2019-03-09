@@ -34,6 +34,11 @@ public class AutoState extends LinearOpMode {
     static final double     DRIVE_SPEED             = 0.75;
     static final double     TURN_SPEED              = 0.5;
 
+    //Init booleans for the Gold particle's location
+    boolean left = false;
+    boolean center = false;
+    boolean right = false;
+
     //creating hardware objects
     Chassis chassis = new Chassis(true); //Initialize our Pushbot
 
@@ -53,6 +58,9 @@ public class AutoState extends LinearOpMode {
 
     @Override
     public void runOpMode() {
+        //init hardware
+        chassis.init(hardwareMap);
+
         //Reset all Encoders
         chassis.stopAndReset();
 
@@ -103,10 +111,13 @@ public class AutoState extends LinearOpMode {
                             if (goldMineralX != -1 && silverMineral1X != -1 && silverMineral2X != -1) {
                                 if (goldMineralX < silverMineral1X && goldMineralX < silverMineral2X) {
                                     telemetry.addData("Gold Mineral Position", "Left");
+                                    left = true;
                                 } else if (goldMineralX > silverMineral1X && goldMineralX > silverMineral2X) {
                                     telemetry.addData("Gold Mineral Position", "Right");
+                                    right = true;
                                 } else {
                                     telemetry.addData("Gold Mineral Position", "Center");
+                                    center = true;
                                 }
                             }
                         }
@@ -119,16 +130,6 @@ public class AutoState extends LinearOpMode {
         if (tfod != null) {
             tfod.shutdown();
         }
-
-        //init hardware
-        chassis.init(hardwareMap);
-
-        //vuforia setupw2
-        VuforiaTrackables relicTrackables = this.chassis.vuforia.loadTrackablesFromAsset("RelicVuMark");
-        VuforiaTrackable relicTemplate = relicTrackables.get(0);
-        relicTemplate.setName("relicVuMarkTemplate");
-
-        waitForStart();
 
         //lower to the ground and let go of bracket
         chassis.extendLift();
@@ -143,16 +144,11 @@ public class AutoState extends LinearOpMode {
 
 
         //knock gold mineral
-        boolean left = false;
-        boolean middle = false;
-        boolean right = false;
-
-        //move to team depot and drop team marker
         if (left = true){
             chassis.turnToPosition(-45);
             encoderDrive(1.0, 38, 38, 38, 38, 10);
         }
-        else if (middle = true){
+        else if (center = true){
             encoderDrive(1.0, 88, 88, 88, 88, 15);
         }
         else if (right = true){
