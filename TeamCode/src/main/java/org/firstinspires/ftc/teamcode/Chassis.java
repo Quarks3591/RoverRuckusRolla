@@ -192,6 +192,20 @@ public class Chassis {
         BackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         FrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         BackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        HangLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        HangSpool.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        BoxLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        Collector.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    }
+    public void runUsingEncoders(){
+        FrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        BackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        FrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        BackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        HangLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        HangSpool.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        BoxLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        Collector.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
     public void runToPosition() {
         FrontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
